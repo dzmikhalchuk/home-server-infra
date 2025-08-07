@@ -4,7 +4,7 @@ metadata:
   name: torrserver
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web
-    traefik.ingress.kubernetes.io/router.tls: "false"
+    traefik.ingress.kubernetes.io/router.middlewares: default-strip-torrserver-prefix@kubernetescrd
 spec:
   rules:
     - http:
