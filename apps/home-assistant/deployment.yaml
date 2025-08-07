@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: home-assistant
+  labels:
+    app: home-assistant
 spec:
   replicas: 1
   selector:
@@ -19,11 +21,13 @@ spec:
             - containerPort: 8123
           env:
             - name: TRUSTED_PROXIES
-          value: "192.168.0.0/24"
-    volumeMounts:
-      - name: config
-        mountPath: /config
-        volumes:
-          - name: config
-            persistentVolumeClaim:
-              claimName: home-assistant-pvc
+              value: "0.0.0.0/0"
+            - name: SERVER_HOST
+              value: "0.0.0.0"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: home-assistant-pvc
