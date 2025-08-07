@@ -17,10 +17,13 @@ spec:
           image: ghcr.io/home-assistant/home-assistant:stable
           ports:
             - containerPort: 8123
-          volumeMounts:
-            - name: config
-              mountPath: /config
-      volumes:
-        - name: config
-          persistentVolumeClaim:
-            claimName: home-assistant-pvc
+          env:
+            - name: TRUSTED_PROXIES
+          value: "192.168.0.0/24"
+    volumeMounts:
+      - name: config
+        mountPath: /config
+        volumes:
+          - name: config
+            persistentVolumeClaim:
+              claimName: home-assistant-pvc
