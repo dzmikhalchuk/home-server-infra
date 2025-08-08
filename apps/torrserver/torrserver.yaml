@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: torrserver
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: torrserver
+  namespace: torrserver
+spec:
+  serviceName: torrserver
+  replicas: 1
+  selector:
+    matchLabels:
+      app: torrserver
+  template:
+    metadata:
+      labels:
+        app: torrserver
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: torrserver
+          image: ghcr.io/yourok/torrserver:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: "Europe/Moscow"
+          ports:
+            - name: web
+              containerPort: 8090
+              protocol: TCP
+          volumeMounts:
+            - name: data
+              mountPath: /opt/ts/config
+      volumes:
+        - name: data
+          emptyDir: {}
