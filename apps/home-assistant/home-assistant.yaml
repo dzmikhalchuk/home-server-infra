@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: homeassistant
+  namespace: homeassistant
+spec:
+  serviceName: homeassistant
+  replicas: 1
+  selector:
+    matchLabels: { app: homeassistant }
+  template:
+    metadata:
+      labels: { app: homeassistant }
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: homeassistant
+          image: ghcr.io/home-assistant/home-assistant:stable
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true
+          env:
+            - name: TZ
+              value: "Europe/Warsaw"
+          ports:
+            - name: web
+              containerPort: 8123
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: zigbee
+              mountPath: /dev/ttyUSB0
+    volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: ha-config
+      - name: zigbee
+        hostPath:
+          path: /dev/serial/by-id/usb-Itead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_V2_0c8d9270bd4bef119cf9baa079f42d1b-if00-port0
+          type: CharDevice
