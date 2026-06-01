@@ -32,8 +32,10 @@ metadata:
   name: qdrant
   namespace: ai
 spec:
+  type: NodePort
   selector:
     app: qdrant
   ports:
   - port: 6333
     targetPort: 6333
+    nodePort: 30633
